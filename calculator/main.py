@@ -1,5 +1,5 @@
 import flet as ft
-
+import math
 
 class CalcButton(ft.ElevatedButton):
     def __init__(self, text, button_clicked, expand=1):
@@ -54,7 +54,23 @@ class CalculatorApp(ft.Container):
                         ExtraActionButton(text="e^x", button_clicked=self.button_clicked),
                     ]
                 ),
-
+                ft.Row(
+                    controls=(
+                        ExtraActionButton(text="√", button_clicked=self.button_clicked),
+                        ExtraActionButton(text="∛", button_clicked=self.button_clicked),
+                        ExtraActionButton(text="log", button_clicked=self.button_clicked),
+                        ExtraActionButton(text="x!", button_clicked=self.button_clicked),
+                    ) 
+                ),
+                ft.Row(
+                    controls=(
+                        ExtraActionButton(text="sin", button_clicked=self.button_clicked),
+                        ExtraActionButton(text="cos", button_clicked=self.button_clicked),
+                        ExtraActionButton(text="tan", button_clicked=self.button_clicked),
+                        ExtraActionButton(text="π", button_clicked=self.button_clicked),
+                    )
+                ),
+                
 
 
                 ft.Row(
@@ -149,39 +165,77 @@ class CalculatorApp(ft.Container):
                     self.format_number(abs(float(self.result.value)))
                 )
 
-
-
         elif data in ("x^2"):
-            self.result.value = self.format_number(  # format_numberメソッドを使って、小数点以下が0の場合は整数に変換
-                float(self.result.value) * float(self.result.value)
-            )
+            self.result.value = self.format_number(float(self.result.value) ** 2)
             self.reset()
-        
+            
         elif data in ("x^3"):
-            self.result.value = self.format_number(
-                float(self.result.value) * float(self.result.value) * float(self.result.value)
-            )
+            self.result.value = self.format_number(float(self.result.value) ** 3)
             self.reset()
         
         elif data in ("x^y"):
-            
-            # xのy乗を計算する
-            # xの値をoperand1に保存
-            # yの値を
+            # ユーザーが「x^y」ボタンを押したら、現在の値を operand1 に格納
             self.operand1 = float(self.result.value)
-            self.operator = "^"
-            self.new_operand = True
-            # yの値を入力
-            self.result.value = "0" 
-
+            self.operator = "^"  # 演算子を "^" に設定
+            self.new_operand = True  # 新しいオペランド入力を待つ状態にする
+            self.result.value = "0"  # 次の入力を待機
 
         elif data in ("e^x"):
-            self.result.value = self.format_number(2.71828 ** float(self.result.value))
+            self.result.value = self.format_number(2.718281828459045 ** float(self.result.value))
+            self.reset()
+        
+        elif data in ("√"):
+            self.result.value = self.format_number(float(self.result.value) ** 0.5)
+            self.reset()
+        
+        elif data in ("∛"):
+            self.result.value = self.format_number(float(self.result.value) ** (1/3))
+            self.reset()
+        
+        elif data in ("log"):
+            self.result.value = self.format_number(math.log10(float(self.result.value)))
+            self.reset()
+        
+        elif data in ("x!"):
+            try:
+                value = float(self.result.value)
+                # 入力が非負整数であることを確認
+                if value < 0 or not value.is_integer():
+                    self.result.value = "Error"  # 負数や小数の場合はエラーを表示
+                else:
+                    # 階乗を計算 (整数部分を使う)
+                    self.result.value = self.format_number(math.factorial(int(value)))
+            except (ValueError, OverflowError):
+                self.result.value = "Error"  # 大きすぎる数値の場合もエラー
+            self.reset()
+
+
+        elif data in ("sin"):
+            # 度をラジアンに変換
+            radians = math.radians(float(self.result.value))
+            self.result.value = self.format_number(math.sin(radians))
+            self.reset()
+
+        elif data in ("cos"):
+            # 度をラジアンに変換
+            radians = math.radians(float(self.result.value))
+            self.result.value = self.format_number(math.cos(radians))
+            self.reset()
+
+        elif data in ("tan"):
+            # 度をラジアンに変換
+            radians = math.radians(float(self.result.value))
+            try:
+                self.result.value = self.format_number(math.tan(radians))
+            except ValueError:
+                self.result.value = "Error"  # tan(90°)などの未定義ケースに対応
             self.reset()
 
         
-
-
+        elif data in ("π"):
+            self.result.value = self.format_number(math.pi)
+            self.reset()
+            
         self.update()
 
     def format_number(self, num):
@@ -191,21 +245,22 @@ class CalculatorApp(ft.Container):
             return num
 
     def calculate(self, operand1, operand2, operator):
-
         if operator == "+":
             return self.format_number(operand1 + operand2)
-
         elif operator == "-":
             return self.format_number(operand1 - operand2)
-
         elif operator == "*":
             return self.format_number(operand1 * operand2)
-
         elif operator == "/":
             if operand2 == 0:
                 return "Error"
             else:
                 return self.format_number(operand1 / operand2)
+        elif operator == "^":  # ここで x^y を処理
+            return self.format_number(operand1 ** operand2)
+        else:
+            return "Error"
+
 
     def reset(self):
         self.operator = "+"
