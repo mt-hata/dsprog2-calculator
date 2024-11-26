@@ -4,10 +4,10 @@ import math
 class CalcButton(ft.ElevatedButton):
     def __init__(self, text, button_clicked, expand=1):
         super().__init__()
-        self.text = text
-        self.expand = expand
-        self.on_click = button_clicked
-        self.data = text
+        self.text = text # ボタンに表示するテキスト
+        self.expand = expand # ボタンの幅を指定
+        self.on_click = button_clicked # ボタンがクリックされたときに呼び出す関数
+        self.data = text # ボタンのデータを設定
 
 
 class DigitButton(CalcButton):
@@ -166,10 +166,12 @@ class CalculatorApp(ft.Container):
                 )
 
         elif data in ("x^2"):
+            # ユーザーが「x^2」ボタンを押したら、現在の値を 2 乗して表示
             self.result.value = self.format_number(float(self.result.value) ** 2)
             self.reset()
             
         elif data in ("x^3"):
+            # ユーザーが「x^3」ボタンを押したら、現在の値を 3 乗して表示
             self.result.value = self.format_number(float(self.result.value) ** 3)
             self.reset()
         
@@ -181,22 +183,27 @@ class CalculatorApp(ft.Container):
             self.result.value = "0"  # 次の入力を待機
 
         elif data in ("e^x"):
+            # ユーザーが「e^x」ボタンを押したら、ネイピア数の x 乗を表示
             self.result.value = self.format_number(2.718281828459045 ** float(self.result.value))
             self.reset()
         
         elif data in ("√"):
+            # ユーザーが「√」ボタンを押したら、現在の値の平方根を表示
             self.result.value = self.format_number(float(self.result.value) ** 0.5)
             self.reset()
         
         elif data in ("∛"):
+            # ユーザーが「∛」ボタンを押したら、現在の値の立方根を表示
             self.result.value = self.format_number(float(self.result.value) ** (1/3))
             self.reset()
         
         elif data in ("log"):
+            # ユーザーが「log」ボタンを押したら、現在の値の常用対数を表示
             self.result.value = self.format_number(math.log10(float(self.result.value)))
             self.reset()
         
         elif data in ("x!"):
+            # ユーザーが「x!」ボタンを押したら、現在の値の階乗を表示
             try:
                 value = float(self.result.value)
                 # 入力が非負整数であることを確認
@@ -209,8 +216,8 @@ class CalculatorApp(ft.Container):
                 self.result.value = "Error"  # 大きすぎる数値の場合もエラー
             self.reset()
 
-
         elif data in ("sin"):
+            # ユーザーが「sin」ボタンを押したら、現在の値の正弦を表示
             # 度をラジアンに変換
             radians = math.radians(float(self.result.value))
             self.result.value = self.format_number(math.sin(radians))
