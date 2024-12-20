@@ -238,8 +238,8 @@ class CalculatorApp(ft.Container):
                 self.result.value = "Error"  # tan(90°)などの未定義ケースに対応
             self.reset()
 
-        
         elif data in ("π"):
+            # ユーザーが「π」ボタンを押したら、円周率を表示
             self.result.value = self.format_number(math.pi)
             self.reset()
             
